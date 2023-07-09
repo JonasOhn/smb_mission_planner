@@ -1,4 +1,4 @@
-Forked repo for team 5 of RSS2023.
+Forked Repo for Team 5 of RSS2023.
 
 ## General Info
 This repo adds mission planning functionality to the stack.
