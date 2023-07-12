@@ -51,6 +51,7 @@ class WaypointMission(smach.State):
         if timed_out:
             rospy.loginfo(f"Timed out {self.waypoint_name}. Loading next waypoint...")
             self.waypoint_idx += 1
+            return 'Next Waypoint'
         elif self.next_waypoint:
             rospy.loginfo("Waypoint '" + self.waypoint_name +
                               "' reached. Loading next waypoint...")
