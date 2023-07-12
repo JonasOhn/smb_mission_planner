@@ -46,9 +46,9 @@ class WaypointMission(smach.State):
             current_waypoint['x_m'], current_waypoint['y_m'], current_waypoint['yaw_rad'])
         rospy.loginfo("Waypoint set: '" + self.waypoint_name + "'.")
 
-        timed_out = self.client.wait_for_result(rospy.Duration.from_sec(30.))
+        success = self.client.wait_for_result(rospy.Duration.from_sec(30.))
 
-        if timed_out:
+        if not success:
             rospy.loginfo(f"Timed out {self.waypoint_name}. Loading next waypoint...")
             self.waypoint_idx += 1
             return 'Next Waypoint'
