@@ -9,12 +9,13 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
 
 class WaypointMission(smach.State):
-    def __init__(self, mission_data, reference_frame):
+    def __init__(self, mission_data, reference_frame, timeout=30.):
         smach.State.__init__(
             self, outcomes=['Completed', 'Aborted', 'Next Waypoint'])
 
         # Get parameters
         # Frames
+        self.timeout = timeout
         self.reference_frame = reference_frame
 
         self.mission_data = mission_data
@@ -46,7 +47,7 @@ class WaypointMission(smach.State):
             current_waypoint['x_m'], current_waypoint['y_m'], current_waypoint['yaw_rad'])
         rospy.loginfo("Waypoint set: '" + self.waypoint_name + "'.")
 
-        success = self.client.wait_for_result(rospy.Duration.from_sec(30.))
+        success = self.client.wait_for_result(rospy.Duration.from_sec(self.timeout))
 
         if not success:
             rospy.loginfo(f"Timed out {self.waypoint_name}. Loading next waypoint...")

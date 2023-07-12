@@ -10,14 +10,15 @@ from smb_mission_planner.missions.waypoint_mission import WaypointMission
 from smb_mission_planner.missions.twist_mission import TwistMission
 
 class MissionPlan():
-    def __init__(self, missions_data, reference_frame):
+    def __init__(self, missions_data, reference_frame, timeout=30.):
         self.missions_data = missions_data
         self.reference_frame = reference_frame
+        self.timeout = timeout
 
     def createStateMachine(self):
         state_machine = smach.StateMachine(outcomes=['Success', 'Failure'])
         with state_machine:
-            smach.StateMachine.add('Waypoint Mission', WaypointMission(self.missions_data['waypoints'], self.reference_frame),
+            smach.StateMachine.add('Waypoint Mission', WaypointMission(self.missions_data['waypoints'], self.reference_frame, self.timeout),
                                    transitions={'Completed': 'Success', 'Aborted': 'Failure', 'Next Waypoint': 'Waypoint Mission'})
             # smach.StateMachine.add('Twist Mission', TwistMission(self.missions_data['twist_mission'], self.reference_frame),
             #                        transitions={'Completed': 'Success', 'Aborted': 'Failure', 'Next Twist': 'Twist Mission'})
