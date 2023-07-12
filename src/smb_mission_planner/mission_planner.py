@@ -25,11 +25,12 @@ class MissionPlan():
         return state_machine
 
 class MissionPlanner():
-    def __init__(self, yaml_file_path, reference_frame):
+    def __init__(self, yaml_file_path, reference_frame, timeout):
         # Read missions data.
         self.yaml_file_path = yaml_file_path
         self.reference_frame = reference_frame
         self.readMissionsData()
+        self.timeout = timeout
 
         self.main()
 
@@ -42,7 +43,7 @@ class MissionPlanner():
         rospy.loginfo("Mission planner started.")
 
         # Setup state machine.
-        mission_plan = MissionPlan(self.missions_data, self.reference_frame)
+        mission_plan = MissionPlan(self.missions_data, self.reference_frame, self.timeout)
         state_machine = mission_plan.createStateMachine()
 
         # Create and start the introspection server.
