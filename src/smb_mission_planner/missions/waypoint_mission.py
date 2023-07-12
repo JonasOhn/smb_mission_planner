@@ -46,17 +46,20 @@ class WaypointMission(smach.State):
             current_waypoint['x_m'], current_waypoint['y_m'], current_waypoint['yaw_rad'])
         rospy.loginfo("Waypoint set: '" + self.waypoint_name + "'.")
 
-        self.client.wait_for_result()
+        timed_out = self.client.wait_for_result(30.)
 
-        if self.next_waypoint:
+        if timed_out:
+            rospy.loginfo(f"Timed out {self.waypoint_name}. Loading next waypoint...")
+            self.waypoint_idx += 1
+        elif self.next_waypoint:
             rospy.loginfo("Waypoint '" + self.waypoint_name +
                               "' reached. Loading next waypoint...")
             self.waypoint_idx += 1
             return 'Next Waypoint'
         else:
             rospy.logwarn(
-                "Waypoint of mission unreachable. Aborting current mission.")
-            self.waypoint_idx = 0.
+                "Waypoint of mission unreachable. Trying next one.")
+            self.waypoint_idx +=1.
             return 'Aborted'
 
     def active_cb(self):
@@ -75,7 +78,7 @@ class WaypointMission(smach.State):
             self.next_waypoint = False
 
         elif status == GoalStatus.RECALLED:
-            rospy.loginfo(self.waypoint_name+" received a cancel request before it started executing, successfully cancelled!")
+            rospy.loginfo(self.waypoint_name+" received a recall request before it started executing, successfully cancelled!")
             self.next_waypoint = False
 
         elif status == GoalStatus.SUCCEEDED:
