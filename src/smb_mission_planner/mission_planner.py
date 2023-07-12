@@ -31,6 +31,7 @@ class MissionPlanner():
         self.reference_frame = reference_frame
         self.timeout = timeout
         self.readMissionsData()
+        self.timeout = timeout
 
         self.main()
 
