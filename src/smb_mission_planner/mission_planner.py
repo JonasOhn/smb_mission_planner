@@ -29,6 +29,7 @@ class MissionPlanner():
         # Read missions data.
         self.yaml_file_path = yaml_file_path
         self.reference_frame = reference_frame
+        self.timeout = timeout
         self.readMissionsData()
         self.timeout = timeout
 
