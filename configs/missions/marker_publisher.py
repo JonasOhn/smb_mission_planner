@@ -1,5 +1,6 @@
 import rospy
 import yaml
+from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker, MarkerArray
 
@@ -16,7 +17,7 @@ def publish_marker_array_from_yaml(yaml_file, rate):
         waypoint = yaml_data['waypoints'][waypoint_key]
         x = waypoint['x_m']
         y = waypoint['y_m']
-        z = 0  # Assuming z coordinate is 0 for visualization
+        z =   # Assuming z coordinate is 0 for visualization
 
         # Create a marker with waypoint coordinates
         marker = Marker()
@@ -27,6 +28,7 @@ def publish_marker_array_from_yaml(yaml_file, rate):
         marker.type = Marker.SPHERE
         marker.action = Marker.ADD
         marker.pose.position = Point(x, y, z)
+        marker.pose.orientation = Quaternion(0, 0, waypoint['yaw_rad'], 0)
         marker.scale.x = 0.5
         marker.scale.y = 0.15
         marker.scale.z = 0.15
