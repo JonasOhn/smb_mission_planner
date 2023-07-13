@@ -20,7 +20,7 @@ def publish_marker_array_from_yaml(yaml_file, rate):
 
         # Create a marker with waypoint coordinates
         marker = Marker()
-        marker.header.frame_id = 'base_link'
+        marker.header.frame_id = 'world_graph_msf'
         marker.header.stamp = rospy.Time.now()
         marker.ns = 'my_namespace'
         marker.id = index
@@ -51,7 +51,7 @@ def publish_marker_array_from_yaml(yaml_file, rate):
 # Example usage:
 if __name__ == '__main__':
     rospy.init_node('marker_publisher_node')
-    yaml_file_path = 'waypoints.yaml'
+    yaml_file_path = '/home/jonas/rss/smb_catkin_ws/src/planning/smb_mission_planner/configs/missions/main_sim.yaml'
     publish_rate = rospy.Rate(1)  # 1 Hz publishing rate
     publish_marker_array_from_yaml(yaml_file_path, publish_rate)
 
