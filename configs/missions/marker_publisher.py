@@ -1,7 +1,17 @@
 import rospy
 import yaml
+from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker, MarkerArray
+
+import tf.transformations as tf
+import rospy
+from geometry_msgs.msg import Quaternion
+import tf.transformations as tf
+
+def euler_to_quaternion(roll, pitch, yaw):
+    quat = tf.quaternion_from_euler(roll, pitch, yaw)
+    return quat
 
 def publish_marker_array_from_yaml(yaml_file, rate):
     # Read YAML file
@@ -20,13 +30,16 @@ def publish_marker_array_from_yaml(yaml_file, rate):
 
         # Create a marker with waypoint coordinates
         marker = Marker()
-        marker.header.frame_id = 'world_graph_msf'
+        marker.header.frame_id = 'map_o3d'
         marker.header.stamp = rospy.Time.now()
         marker.ns = 'my_namespace'
         marker.id = index
         marker.type = Marker.SPHERE
         marker.action = Marker.ADD
         marker.pose.position = Point(x, y, z)
+        euler_angles = [0, 0, waypoint['yaw_rad']]
+        quaternion = euler_to_quaternion(*euler_angles)
+        marker.pose.orientation = Quaternion(*quaternion)
         marker.scale.x = 0.5
         marker.scale.y = 0.15
         marker.scale.z = 0.15
@@ -48,10 +61,12 @@ def publish_marker_array_from_yaml(yaml_file, rate):
 
     rospy.loginfo('Marker array publishing completed.')
 
+
+
 # Example usage:
 if __name__ == '__main__':
     rospy.init_node('marker_publisher_node')
-    yaml_file_path = '/home/jonas/rss/smb_catkin_ws/src/planning/smb_mission_planner/configs/missions/main_sim.yaml'
+    yaml_file_path = 'main_sim.yaml'
     publish_rate = rospy.Rate(1)  # 1 Hz publishing rate
     publish_marker_array_from_yaml(yaml_file_path, publish_rate)
 
