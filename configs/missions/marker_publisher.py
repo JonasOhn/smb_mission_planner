@@ -4,6 +4,15 @@ from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker, MarkerArray
 
+import tf.transformations as tf
+import rospy
+from geometry_msgs.msg import Quaternion
+import tf.transformations as tf
+
+def euler_to_quaternion(roll, pitch, yaw):
+    quat = tf.quaternion_from_euler(roll, pitch, yaw)
+    return quat
+
 def publish_marker_array_from_yaml(yaml_file, rate):
     # Read YAML file
     with open(yaml_file, 'r') as file:
@@ -17,18 +26,20 @@ def publish_marker_array_from_yaml(yaml_file, rate):
         waypoint = yaml_data['waypoints'][waypoint_key]
         x = waypoint['x_m']
         y = waypoint['y_m']
-        z =   # Assuming z coordinate is 0 for visualization
+        z = 0  # Assuming z coordinate is 0 for visualization
 
         # Create a marker with waypoint coordinates
         marker = Marker()
-        marker.header.frame_id = 'base_link'
+        marker.header.frame_id = 'map_o3d'
         marker.header.stamp = rospy.Time.now()
         marker.ns = 'my_namespace'
         marker.id = index
         marker.type = Marker.SPHERE
         marker.action = Marker.ADD
         marker.pose.position = Point(x, y, z)
-        marker.pose.orientation = Quaternion(0, 0, waypoint['yaw_rad'], 0)
+        euler_angles = [0, 0, waypoint['yaw_rad']]
+        quaternion = euler_to_quaternion(*euler_angles)
+        marker.pose.orientation = Quaternion(*quaternion)
         marker.scale.x = 0.5
         marker.scale.y = 0.15
         marker.scale.z = 0.15
@@ -50,10 +61,12 @@ def publish_marker_array_from_yaml(yaml_file, rate):
 
     rospy.loginfo('Marker array publishing completed.')
 
+
+
 # Example usage:
 if __name__ == '__main__':
     rospy.init_node('marker_publisher_node')
-    yaml_file_path = 'waypoints.yaml'
+    yaml_file_path = 'main_sim.yaml'
     publish_rate = rospy.Rate(1)  # 1 Hz publishing rate
     publish_marker_array_from_yaml(yaml_file_path, publish_rate)
 
